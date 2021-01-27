@@ -1,5 +1,5 @@
 name: JustKits
-version: 1.0
+version: 1.1
 main: io.github.gd402.justkits.JustKits
 api-version: 1.16
 
@@ -8,3 +8,7 @@ commands:
     description: Gives a specified kit to player
     usage: /kit
     permission: justkits.kit
+  kits:
+    description: Lists available kits from JustKits
+    usage: /kits
+    permission: justkits.kits

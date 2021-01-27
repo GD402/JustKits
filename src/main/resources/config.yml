@@ -1,0 +1,22 @@
+kits:
+  member:
+    groups: member, vip
+    items:
+      item1:
+        type: DIAMOND
+        amount: 8
+      item2:
+        type: IRON_INGOT
+        amount: 32
+      item3:
+        type: IRON_SWORD
+        amount: 1
+  vip:
+    groups: vip
+    items:
+      item1:
+        type: DIAMOND_SWORD
+        amount: 1
+      item2:
+        type: DIAMOND_BLOCK
+        amount: 16
