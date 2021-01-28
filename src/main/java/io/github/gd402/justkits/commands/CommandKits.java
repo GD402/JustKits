@@ -17,7 +17,7 @@ public class CommandKits implements CommandExecutor {
 
         if(commandArgs.length > 0) {
             commandSender.sendMessage(ChatColor.RED + "This command does not use any arguments.");
-            return false;
+            return true;
         }
 
         List<String> availableKits = new ArrayList<>(Objects.requireNonNull(JustKits.getConfigFile().getConfigurationSection("kits")).getKeys(false)); // Grabs each item under 'kit' in the config file, which will be the names of each kit
