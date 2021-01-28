@@ -1,6 +1,5 @@
 kits:
   member:
-    groups: member, vip
     items:
       item1:
         type: DIAMOND
@@ -12,7 +11,6 @@ kits:
         type: IRON_SWORD
         amount: 1
   vip:
-    groups: vip
     items:
       item1:
         type: DIAMOND_SWORD

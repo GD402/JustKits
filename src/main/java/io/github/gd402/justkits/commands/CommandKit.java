@@ -20,24 +20,29 @@ public class CommandKit implements CommandExecutor {
         if(commandSender instanceof Player) {
             Player player = (Player) commandSender; // Cast to Player instance to use Player-specific methods
 
-            if(commandArgs.length == 0) { commandSender.sendMessage(ChatColor.RED + "No kit defined. Try /kits to see available kits. Usage: /kit [kit name]"); return false; } // Check to see if kit name is not specified
+            if(commandArgs.length == 0) { commandSender.sendMessage(ChatColor.RED + "No kit defined. Try /kits to see available kits. Usage: /kit [kit name]"); return true; } // Check to see if kit name is not specified
+            if(commandArgs.length > 1) { commandSender.sendMessage(ChatColor.RED + "Too many arguments given. Usage: /kit [kit name]"); return true; } // Checks to make sure only one argument is entered
 
             List<String> availableKits = new ArrayList<>(Objects.requireNonNull(JustKits.getConfigFile().getConfigurationSection("kits")).getKeys(false)); // Grabs all kits listed under 'kit' in config
-            boolean isKitAvailable = false;
 
+            boolean isKitAvailable = false;
             for(String kit : availableKits) { // Checks if kit is in config
                 if(kit.equals(commandArgs[0])) { isKitAvailable = true; break; }
             }
 
-            if(!isKitAvailable) { commandSender.sendMessage(ChatColor.RED + "'" + commandArgs[0] + "' is not a valid kit."); return false; } // If kit isn't in config, say it isn't valid and break from function
+            if(!isKitAvailable) { commandSender.sendMessage(ChatColor.RED + "'" + commandArgs[0] + "' is not a valid kit."); return true; } // If kit isn't in config, say it isn't valid and break from function
 
-            List<String> kitItems = new ArrayList<>(Objects.requireNonNull(JustKits.getConfigFile().getConfigurationSection(("kits." + commandArgs[0] + ".items"))).getKeys(false)); // Grabs all config items for the selected kit
+            if(!player.hasPermission("JustKits.kit." + commandArgs[0])) { commandSender.sendMessage(ChatColor.RED + "You do not have permission to access '" + commandArgs[0] + "' kit."); return true; } // Checks to see if player has permission to use selected kit
 
-            for(String item : kitItems) { // Grabs item material and item amount from each item under the selected kit, puts those two values into a new ItemStack, and submits that ItemStack as a parameter for addItem() which then adds the item to the player's inventory
-                player.getInventory().addItem(new ItemStack(Objects.requireNonNull(Material.matchMaterial(Objects.requireNonNull(JustKits.getConfigFile().getString("kits." + commandArgs[0] + ".items." + item + ".type")))), JustKits.getConfigFile().getInt("kits." + commandArgs[0] + ".items." + item + ".amount"))); // Has null ptr checks, not that necessary but intellij wanted me to put those in
-            }
+            try { // An extra check to make sure the items can actually be loaded properly from the config.yml
+                List<String> kitItems = new ArrayList<>(Objects.requireNonNull(JustKits.getConfigFile().getConfigurationSection(("kits." + commandArgs[0] + ".items"))).getKeys(false)); // Grabs all config items for the selected kit
 
-            commandSender.sendMessage(ChatColor.GREEN + "'" + commandArgs[0] + "' kit has been added to your inventory.");
+                for(String item : kitItems) { // Grabs item material and item amount from each item under the selected kit, puts those two values into a new ItemStack, and submits that ItemStack as a parameter for addItem() which then adds the item to the player's inventory
+                    player.getInventory().addItem(new ItemStack(Objects.requireNonNull(Material.matchMaterial(Objects.requireNonNull(JustKits.getConfigFile().getString("kits." + commandArgs[0] + ".items." + item + ".type")))), JustKits.getConfigFile().getInt("kits." + commandArgs[0] + ".items." + item + ".amount"))); // Has null ptr checks, not that necessary but intellij wanted me to put those in
+                }
+
+                commandSender.sendMessage(ChatColor.GREEN + "'" + commandArgs[0] + "' kit has been added to your inventory.");
+            } catch(Exception e) { commandSender.sendMessage(ChatColor.RED + "JustKits config items have not been set up correctly, please contact an administrator. " + e.getMessage()); return true; }
 
         } else { commandSender.sendMessage(ChatColor.RED + "Kit may only be used by a player."); } // Triggered if command sender is from server console; not a player
         return true;
